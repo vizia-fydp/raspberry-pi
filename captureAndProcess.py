@@ -1,3 +1,12 @@
+
+#
+# REVISION HISTORY
+#
+# 21/08/01 - zdenno, created
+
+#
+# IMPORTS
+#
 from time import sleep
 from picamera import PiCamera
 
