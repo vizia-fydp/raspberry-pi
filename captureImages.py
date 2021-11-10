@@ -18,10 +18,12 @@ camera = PiCamera()
 #             CALLBACK                #
 #######################################
 def captureAndWrite(self):
+    print("button hit")
     if len(os.listdir(imageDir)) == 0:
         newImagePath = os.path.join(imageDir, "0.jpg")
     else:
-        imageCtr = max(list(filter(lambda x: int(x.replace(".jpg", "")), os.listdir(imageDir))))
+        imageList = {int(x.replace(".jpg", "")) for x in os.listdir(imageDir)}
+        imageCtr = max(imageList)
         newImagePath = os.path.join(imageDir, "{}.jpg".format(imageCtr+1))
     camera.capture(newImagePath)
     print("Captured {}\r\n".format(newImagePath))
