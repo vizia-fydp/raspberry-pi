@@ -10,7 +10,7 @@ BUTTON_BOUNCE_MS = 50
 
 ######### Interrupt service routines #########
 def button1(channel):
-    GPIO.output(BUTTON1_PIN, GPIO.HIGH)
+    GPIO.output(BUZZER_PIN, GPIO.HIGH)
     print("Button 1 pressed.")
 def button2(channel):
     print("Button 2 pressed.")
