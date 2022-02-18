@@ -20,7 +20,7 @@ def button2(channel):
 GPIO.setmode(GPIO.BCM)
 
 # Setup buttons as inputs. GPIO.PUD_DOWN means use internal pull down resister.
-# Button is HIGH when pressed, and LOW while not pressed
+# Button is HIGH while pressed, and LOW while not pressed
 GPIO.setup(BUTTON1_PIN, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 GPIO.setup(BUTTON2_PIN, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
