@@ -10,6 +10,7 @@ BUTTON_BOUNCE_MS = 50
 
 ######### Interrupt service routines #########
 def button1(channel):
+    GPIO.output(BUTTON1_PIN, GPIO.HIGH)
     print("Button 1 pressed.")
 def button2(channel):
     print("Button 2 pressed.")
@@ -23,6 +24,9 @@ GPIO.setmode(GPIO.BCM)
 # Button is HIGH while pressed, and LOW while not pressed
 GPIO.setup(BUTTON1_PIN, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 GPIO.setup(BUTTON2_PIN, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+
+# Setup buzzer as an output
+GPIO.setup(BUZZER_PIN, GPIO.OUT)
 
 # Setup interrupts on falling edge (button released)
 GPIO.add_event_detect(BUTTON1_PIN, GPIO.FALLING, callback = button1,
