@@ -1,4 +1,5 @@
-import RPI.GPIO as GPIO
+# https://roboticsbackend.com/raspberry-pi-gpio-interrupts-tutorial/
+import RPi.GPIO as GPIO
 import time
 
 ######### Constants #########
