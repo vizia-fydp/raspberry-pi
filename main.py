@@ -8,10 +8,16 @@ BUTTON2_PIN = 27
 BUZZER_PIN = 5
 BUTTON_BOUNCE_MS = 50
 
+def beep():
+    GPIO.output(BUZZER_PIN, GPIO.HIGH)
+    time.sleep(1)
+    GPIO.output(BUZZER_PIN, GPIO.LOW)
+
 ######### Interrupt service routines #########
 def button1(channel):
-    GPIO.output(BUZZER_PIN, GPIO.HIGH)
+    beep()
     print("Button 1 pressed.")
+
 def button2(channel):
     print("Button 2 pressed.")
 
