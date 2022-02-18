@@ -19,12 +19,12 @@ def button2(channel):
 # Can use either pin numbers (BOARD) or Broadcom GPIO Numbers (BCM)
 GPIO.setmode(GPIO.BCM)
 
-# Setup buttons as inputs. GPIO.PUD_UP means use internal pull up resister.
-# Button is HIGH while not pressed, and LOW while pressed
+# Setup buttons as inputs. GPIO.PUD_DOWN means use internal pull down resister.
+# Button is HIGH when pressed, and LOW while not pressed
 GPIO.setup(BUTTON1_PIN, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 GPIO.setup(BUTTON2_PIN, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
-# Setup interrupts on rising edge (button released)
+# Setup interrupts on falling edge (button released)
 GPIO.add_event_detect(BUTTON1_PIN, GPIO.FALLING, callback = button1,
     bouncetime = BUTTON_BOUNCE_MS)
 GPIO.add_event_detect(BUTTON2_PIN, GPIO.FALLING, callback = button2,
