@@ -11,3 +11,9 @@ If you are missing `RPi.GPIO`, install with:
 ```
 sudo apt install pigpio
 ```
+
+## Running
+Before running, ensure the server is up and update `SERVER_URL` if necessary.
+```
+python3 main.py
+```
