@@ -1,5 +1,8 @@
-import RPi.GPIO as GPIO
 import time
+import io
+import cv2
+import RPi.GPIO as GPIO
+import numpy as np
 from picamera import PiCamera
 
 
@@ -38,7 +41,18 @@ def errorBeep():
 #      Interrupt Service Routines     #
 #######################################
 def button1(channel):
-    camera.capture("test.png")
+    # camera.capture("test.png")
+    stream = io.BytesIO()
+    camera.capture(stream, format="jpeg")
+
+    # Construct a numpy array from the stream
+    data = np.fromstring(stream.getvalue(), dtype=np.uint8)
+
+    # "Decode" the image from the array, preserving colour
+    image = cv2.imdecode(data, 1)
+
+    cv2.imwrite("test.png", image)
+
     print("Button 1 pressed.")
 
 def button2(channel):
