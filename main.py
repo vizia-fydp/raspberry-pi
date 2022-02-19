@@ -13,14 +13,12 @@ BUTTON_BOUNCE_MS = 50
 def beep():
     buzzer.ChangeFrequency(440)
     buzzer.start(10)
-    time.sleep(0.5)
-    buzzer.stop()
-    buzzer.start(10)
-    time.sleep(0.5)
+    time.sleep(0.1)
     buzzer.stop()
 
 ######### Interrupt service routines #########
 def button1(channel):
+    beep()
     beep()
     print("Button 1 pressed.")
 
