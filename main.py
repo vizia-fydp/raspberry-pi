@@ -8,18 +8,23 @@ import time
 BUTTON1_PIN = 4
 BUTTON2_PIN = 27
 BUZZER_PIN = 5
+BUZZER_FREQUENCY = 440 # Hz
 BUTTON_BOUNCE_MS = 50
 
 def beep():
-    buzzer.ChangeFrequency(440)
-    buzzer.start(10)
+    buzzer.ChangeFrequency(BUZZER_FREQUENCY)
+    buzzer.start(10) # duty cycle
     time.sleep(0.1)
     buzzer.stop()
 
+def errorBeep():
+    beep()
+    time.sleep(0.1)
+    beep()
+
 ######### Interrupt service routines #########
 def button1(channel):
-    beep()
-    beep()
+    errorBeep()
     print("Button 1 pressed.")
 
 def button2(channel):
@@ -35,10 +40,10 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(BUTTON1_PIN, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 GPIO.setup(BUTTON2_PIN, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
-# Setup buzzer as an output
+# Setup buzzer
 GPIO.setup(BUZZER_PIN, GPIO.OUT)
 global buzzer
-buzzer = GPIO.PWM(BUZZER_PIN, 440) # 440 Hz
+buzzer = GPIO.PWM(BUZZER_PIN, BUZZER_FREQUENCY)
 
 # Setup interrupts on falling edge (button released)
 GPIO.add_event_detect(BUTTON1_PIN, GPIO.FALLING, callback = button1,
