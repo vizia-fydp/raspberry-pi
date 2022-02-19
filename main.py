@@ -46,6 +46,10 @@ GPIO.add_event_detect(BUTTON2_PIN, GPIO.FALLING, callback = button2,
 
 ######### Event loop to keep the program running #########
 try:
+    for i in range(0, 100):
+        buzzer.start(i)
+        time.sleep(0.5)
+        buzzer.stop()
     while True:
         time.sleep(1)
 except:
