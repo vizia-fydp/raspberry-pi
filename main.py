@@ -14,6 +14,7 @@ BUTTON2_PIN = 27
 BUZZER_PIN = 5
 BUZZER_FREQUENCY = 440 # Hz
 BUTTON_BOUNCE_MS = 500
+IMAGE_MAX_DIMENSION = 1000
 
 
 #######################################
@@ -36,6 +37,21 @@ def errorBeep():
     time.sleep(0.1)
     beep()
 
+def resizeImage(image):
+    height, width, _ = image.shape
+    scaled_height = 0
+    scaled_width = 0
+
+    if width > height:
+        scaled_width = IMAGE_MAX_DIMENSION
+        scaled_height = height / width * scaled_width
+    else:
+        scaled_height = IMAGE_MAX_DIMENSION
+        scaled_width = width / height * scaled_height
+
+    return cv2.resize(image, (scaled_width, scaled_height),
+        interpolation = cv2.INTER_AREA)
+
 
 #######################################
 #      Interrupt Service Routines     #
@@ -50,6 +66,10 @@ def button1(channel):
 
     # "Decode" the image from the array, preserving colour
     image = cv2.imdecode(data, 1)
+
+    # Resize
+    image = resizeImage(image)
+    print(image.shape)
 
     cv2.imwrite("test.png", image)
 
