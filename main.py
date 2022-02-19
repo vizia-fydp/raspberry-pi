@@ -1,6 +1,7 @@
 import time
 import io
 import cv2
+import requests
 import RPi.GPIO as GPIO
 import numpy as np
 from picamera import PiCamera
@@ -10,9 +11,18 @@ from enum import Enum
 ##########################
 #       Constants        #
 ##########################
+
+SERVER_URL = "https://4eb6-2607-fea8-1c83-1400-f050-47bb-c7ac-6f0c.ngrok.io"
+
+# Pins
 BUTTON1_PIN = 4
 BUTTON2_PIN = 27
 BUZZER_PIN = 5
+
+# SocketIO paths that iOS app listens on
+IOS_INFO = "iOS_info"
+IOS_RESULTS = "iOS_results"
+
 BUZZER_FREQUENCY = 440 # Hz
 BUTTON_BOUNCE_MS = 500
 IMAGE_MAX_DIMENSION = 1000
@@ -32,7 +42,7 @@ camera = PiCamera()
 
 
 #######################################
-#       Buzzer helper functions       #
+#           Helper functions          #
 #######################################
 def beep():
     buzzer.ChangeFrequency(BUZZER_FREQUENCY)
@@ -59,6 +69,33 @@ def resizeImage(image):
 
     return cv2.resize(image, (scaled_width, scaled_height),
         interpolation = cv2.INTER_AREA)
+
+
+#######################################
+#              API Calls              #
+#######################################
+
+def socket_emit(path, msg):
+    params = {"path": path}
+    response = requests.post(
+        url = "{}/socket_emit".format(SERVER_URL),
+        data = msg,
+        params = params
+    )
+    if response.status_code != 200:
+        errorBeep()
+
+def ocr(image, type):
+    # Prepare headers for http request
+    content_type = "image/jpeg"
+    headers = {"content-type": content_type}
+    params = {"type": type, "socket_emit_path": IOS_RESULTS}
+
+def detect_color():
+    pass
+
+def classify_money():
+    pass
 
 
 #######################################
