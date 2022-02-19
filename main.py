@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+from picamera import PiCamera
 
 
 ##########################
@@ -10,6 +11,12 @@ BUTTON2_PIN = 27
 BUZZER_PIN = 5
 BUZZER_FREQUENCY = 440 # Hz
 BUTTON_BOUNCE_MS = 50
+
+
+#######################################
+#          GLOBAL VARIABLES           #
+#######################################
+camera = PiCamera()
 
 
 #######################################
@@ -31,10 +38,11 @@ def errorBeep():
 #      Interrupt Service Routines     #
 #######################################
 def button1(channel):
-    errorBeep()
+    camera.capture("test.png")
     print("Button 1 pressed.")
 
 def button2(channel):
+    errorBeep()
     print("Button 2 pressed.")
 
 
@@ -52,7 +60,6 @@ GPIO.setup(BUTTON2_PIN, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
 # Setup buzzer
 GPIO.setup(BUZZER_PIN, GPIO.OUT)
-global buzzer
 buzzer = GPIO.PWM(BUZZER_PIN, BUZZER_FREQUENCY)
 
 # Setup interrupts on falling edge (button released)
