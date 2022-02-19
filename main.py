@@ -62,7 +62,7 @@ def button1(channel):
     camera.capture(stream, format="jpeg")
 
     # Construct a numpy array from the stream
-    data = np.fromstring(stream.getvalue(), dtype=np.uint8)
+    data = np.frombuffer(stream.getvalue(), dtype=np.uint8)
 
     # "Decode" the image from the array, preserving colour
     image = cv2.imdecode(data, 1)
