@@ -13,7 +13,10 @@ BUTTON_BOUNCE_MS = 50
 def beep():
     buzzer.ChangeFrequency(440)
     buzzer.start(10)
-    time.sleep(1)
+    time.sleep(0.5)
+    buzzer.stop()
+    buzzer.start(10)
+    time.sleep(0.5)
     buzzer.stop()
 
 ######### Interrupt service routines #########
