@@ -1,5 +1,7 @@
+import base64
 import time
 import io
+import json
 import cv2
 import requests
 import RPi.GPIO as GPIO
@@ -12,7 +14,7 @@ from enum import Enum
 #       Constants        #
 ##########################
 
-SERVER_URL = "https://4eb6-2607-fea8-1c83-1400-f050-47bb-c7ac-6f0c.ngrok.io"
+SERVER_URL = "https://98f2-64-229-183-215.ngrok.io"
 
 # Pins
 BUTTON1_PIN = 4
@@ -85,24 +87,79 @@ def socket_emit(path, msg):
     if response.status_code != 200:
         errorBeep()
 
-def ocr(image, type):
-    # Prepare headers for http request
-    content_type = "image/jpeg"
-    headers = {"content-type": content_type}
+def ocr(img, type):
+    # Prepare headers and params for http request
+    headers = {"content-type": "image/jpeg"}
     params = {"type": type, "socket_emit_path": IOS_RESULTS}
 
-def detect_color():
-    pass
+    # Encode image as jpeg and convert to base64 string
+    _, img_arr = cv2.imencode('.jpg', img)
+    img_encoded = base64.b64encode(img_arr.tobytes())
 
-def classify_money():
-    pass
+    # Send request
+    response = requests.post(
+        url = "{}/ocr".format(SERVER_URL),
+        data = img_encoded,
+        headers = headers,
+        params = params
+    )
+
+    if response.status_code != 200:
+        print("ocr error")
+        errorBeep()
+    else:
+        print(json.loads(response.text))
+
+def detect_color(img):
+    # Prepare headers and params for http request
+    headers = {"content-type": "image/jpeg"}
+    params = {"k": 3, "socket_emit_path": IOS_RESULTS}
+
+    # Encode image as jpeg
+    _, img_encoded = cv2.imencode(".jpg", img)
+
+    # Send request
+    response = requests.post(
+        url = "{}/detect_color".format(SERVER_URL),
+        data = img_encoded.tobytes(),
+        headers = headers,
+        params = params
+    )
+
+    if response.status_code != 200:
+        print("detect_color error")
+        errorBeep()
+    else:
+        print(json.loads(response.text))
+
+def classify_money(img):
+    # Prepare headers and params for http request
+    headers = {"content-type": "image/jpeg"}
+    params = {"socket_emit_path": IOS_RESULTS}
+
+    # Encode image as jpeg
+    _, img_encoded = cv2.imencode(".jpg", img)
+
+    # Send request
+    response = requests.post(
+        url = "{}/classify_money".format(SERVER_URL),
+        data = img_encoded.tobytes(),
+        headers = headers,
+        params = params
+    )
+
+    if response.status_code != 200:
+        print("classify_money error")
+        errorBeep()
+    else:
+        print(json.loads(response.text))
 
 
 #######################################
 #      Interrupt Service Routines     #
 #######################################
 def button1(channel):
-    # camera.capture("test.png")
+    # Capture image from picam
     stream = io.BytesIO()
     camera.capture(stream, format="jpeg")
 
@@ -114,15 +171,23 @@ def button1(channel):
 
     # Resize
     image = resizeImage(image)
-    print(image.shape)
 
-    cv2.imwrite("test.png", image)
-
-    print("Button 1 pressed.")
+    # Make API call based on which mode we are in
+    if mode == Mode.TEXT:
+        ocr(image, "TEXT_DETECTION")
+    elif mode == Mode.DOCUMENT:
+        ocr(image, "DOCUMENT_TEXT_DETECTION")
+    elif mode == Mode.COLOR:
+        detect_color(image)
+    elif mode == Mode.MONEY:
+        classify_money(image)
 
 def button2(channel):
     global mode
     mode = Mode((mode.value + 1) % len(Mode))
+
+    # Emit on IOS_INFO socket so app can announce mode switch
+    socket_emit(IOS_INFO, str(mode.name))
     print("Switched to mode {}".format(mode))
 
 
