@@ -4,6 +4,7 @@ import cv2
 import RPi.GPIO as GPIO
 import numpy as np
 from picamera import PiCamera
+from enum import Enum
 
 
 ##########################
@@ -20,6 +21,13 @@ IMAGE_MAX_DIMENSION = 1000
 #######################################
 #          GLOBAL VARIABLES           #
 #######################################
+class Mode(Enum):
+    TEXT = 0
+    DOCUMENT = 1
+    COLOR = 2
+    MONEY = 3
+
+mode = Mode.TEXT
 camera = PiCamera()
 
 
@@ -76,8 +84,8 @@ def button1(channel):
     print("Button 1 pressed.")
 
 def button2(channel):
-    errorBeep()
-    print("Button 2 pressed.")
+    mode = (mode + 1) % len(Mode)
+    print("Switched to mode {}".format(mode))
 
 
 #######################################
