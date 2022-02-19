@@ -10,7 +10,7 @@ BUTTON1_PIN = 4
 BUTTON2_PIN = 27
 BUZZER_PIN = 5
 BUZZER_FREQUENCY = 440 # Hz
-BUTTON_BOUNCE_MS = 50
+BUTTON_BOUNCE_MS = 500
 
 
 #######################################
