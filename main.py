@@ -10,18 +10,10 @@ BUTTON2_PIN = 27
 BUZZER_PIN = 5
 BUTTON_BOUNCE_MS = 50
 
-b = TonalBuzzer(17)
-
 def beep():
-    b.play(Tone("A4"))
-    b.play(Tone(220.0)) # Hz
-    b.play(Tone(60)) # middle C in MIDI notation
-    b.play("A4")
-    b.play(220.0)
-    b.play(60)
-    # GPIO.output(BUZZER_PIN, GPIO.HIGH)
-    # time.sleep(1)
-    # GPIO.output(BUZZER_PIN, GPIO.LOW)
+    buzzer.start(50)
+    time.sleep(1)
+    buzzer.stop()
 
 ######### Interrupt service routines #########
 def button1(channel):
@@ -43,6 +35,8 @@ GPIO.setup(BUTTON2_PIN, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
 # Setup buzzer as an output
 GPIO.setup(BUZZER_PIN, GPIO.OUT)
+global buzzer
+buzzer = GPIO.PWM(BUZZER_PIN, 440)
 
 # Setup interrupts on falling edge (button released)
 GPIO.add_event_detect(BUTTON1_PIN, GPIO.FALLING, callback = button1,
