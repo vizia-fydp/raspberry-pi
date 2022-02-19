@@ -84,8 +84,8 @@ def button1(channel):
     print("Button 1 pressed.")
 
 def button2(channel):
-    new_mode = Mode((mode.value + 1) % len(Mode))
-    mode = new_mode
+    global mode
+    mode = Mode((mode.value + 1) % len(Mode))
     print("Switched to mode {}".format(mode))
 
 
