@@ -11,7 +11,8 @@ BUZZER_PIN = 5
 BUTTON_BOUNCE_MS = 50
 
 def beep():
-    buzzer.start(50)
+    buzzer.ChangeFrequency(440)
+    buzzer.start(10)
     time.sleep(1)
     buzzer.stop()
 
