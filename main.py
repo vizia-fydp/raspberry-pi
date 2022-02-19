@@ -14,7 +14,7 @@ from enum import Enum
 #       Constants        #
 ##########################
 
-SERVER_URL = "https://98f2-64-229-183-215.ngrok.io"
+SERVER_URL = "https://7852-64-229-183-215.ngrok.io"
 
 # Pins
 BUTTON1_PIN = 4
