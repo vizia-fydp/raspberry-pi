@@ -11,7 +11,7 @@ BUZZER_PIN = 5
 BUTTON_BOUNCE_MS = 50
 
 def beep():
-    buzzer.start(50)
+    buzzer.start()
     time.sleep(1)
     buzzer.stop()
 
@@ -36,8 +36,7 @@ GPIO.setup(BUTTON2_PIN, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 # Setup buzzer as an output
 GPIO.setup(BUZZER_PIN, GPIO.OUT)
 global buzzer
-buzzer = GPIO.PWM(BUZZER_PIN, 1)
-buzzer.start(0)
+buzzer = GPIO.PWM(BUZZER_PIN, 440) # 440 Hz
 
 # Setup interrupts on falling edge (button released)
 GPIO.add_event_detect(BUTTON1_PIN, GPIO.FALLING, callback = button1,
