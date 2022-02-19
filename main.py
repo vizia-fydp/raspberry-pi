@@ -1,16 +1,20 @@
-# https://roboticsbackend.com/raspberry-pi-gpio-interrupts-tutorial/
 import RPi.GPIO as GPIO
-from gpiozero import TonalBuzzer
-from gpiozero.tones import Tone
 import time
 
-######### Constants #########
+
+##########################
+#       Constants        #
+##########################
 BUTTON1_PIN = 4
 BUTTON2_PIN = 27
 BUZZER_PIN = 5
 BUZZER_FREQUENCY = 440 # Hz
 BUTTON_BOUNCE_MS = 50
 
+
+#######################################
+#       Buzzer helper functions       #
+#######################################
 def beep():
     buzzer.ChangeFrequency(BUZZER_FREQUENCY)
     buzzer.start(10) # duty cycle
@@ -22,7 +26,10 @@ def errorBeep():
     time.sleep(0.1)
     beep()
 
-######### Interrupt service routines #########
+
+#######################################
+#      Interrupt Service Routines     #
+#######################################
 def button1(channel):
     errorBeep()
     print("Button 1 pressed.")
@@ -30,7 +37,10 @@ def button1(channel):
 def button2(channel):
     print("Button 2 pressed.")
 
-######### GPIO Setup #########
+
+#######################################
+#             GPIO Setup              #
+#######################################
 
 # Can use either pin numbers (BOARD) or Broadcom GPIO Numbers (BCM)
 GPIO.setmode(GPIO.BCM)
@@ -51,7 +61,10 @@ GPIO.add_event_detect(BUTTON1_PIN, GPIO.FALLING, callback = button1,
 GPIO.add_event_detect(BUTTON2_PIN, GPIO.FALLING, callback = button2,
     bouncetime = BUTTON_BOUNCE_MS)
 
-######### Event loop to keep the program running #########
+
+#######################################
+#     Loop to keep program running    #
+#######################################
 try:
     while True:
         time.sleep(1)
