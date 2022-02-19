@@ -1,5 +1,7 @@
 # https://roboticsbackend.com/raspberry-pi-gpio-interrupts-tutorial/
 import RPi.GPIO as GPIO
+from gpiozero import TonalBuzzer
+from gpiozero.tones import Tone
 import time
 
 ######### Constants #########
@@ -8,10 +10,18 @@ BUTTON2_PIN = 27
 BUZZER_PIN = 5
 BUTTON_BOUNCE_MS = 50
 
+b = TonalBuzzer(17)
+
 def beep():
-    GPIO.output(BUZZER_PIN, GPIO.HIGH)
-    time.sleep(1)
-    GPIO.output(BUZZER_PIN, GPIO.LOW)
+    b.play(Tone("A4"))
+    b.play(Tone(220.0)) # Hz
+    b.play(Tone(60)) # middle C in MIDI notation
+    b.play("A4")
+    b.play(220.0)
+    b.play(60)
+    # GPIO.output(BUZZER_PIN, GPIO.HIGH)
+    # time.sleep(1)
+    # GPIO.output(BUZZER_PIN, GPIO.LOW)
 
 ######### Interrupt service routines #########
 def button1(channel):
