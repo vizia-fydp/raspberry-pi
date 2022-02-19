@@ -44,10 +44,10 @@ def resizeImage(image):
 
     if width > height:
         scaled_width = IMAGE_MAX_DIMENSION
-        scaled_height = height / width * scaled_width
+        scaled_height = int(height / width * scaled_width)
     else:
         scaled_height = IMAGE_MAX_DIMENSION
-        scaled_width = width / height * scaled_height
+        scaled_width = int(width / height * scaled_height)
 
     return cv2.resize(image, (scaled_width, scaled_height),
         interpolation = cv2.INTER_AREA)
