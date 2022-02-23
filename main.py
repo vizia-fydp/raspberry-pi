@@ -1,5 +1,6 @@
 import base64
 import cv2
+import datetime
 import io
 import json
 import requests
@@ -13,7 +14,7 @@ from picamera import PiCamera
 ##########################
 #       Constants        #
 ##########################
-SERVER_URL = "https://7852-64-229-183-215.ngrok.io"
+SERVER_URL = "https://ce92-64-229-183-215.ngrok.io"
 
 # Pins
 BUTTON1_PIN = 4
@@ -24,10 +25,17 @@ BUZZER_PIN = 5
 IOS_INFO = "iOS_info"
 IOS_RESULTS = "iOS_results"
 
+# Image dimensions
+IMAGE_CAPTURE_WIDTH = 1920
+IMAGE_CAPTURE_HEIGHT = 1080
+IMAGE_RESIZE_WIDTH = 1000
+IMAGE_RESIZE_HEIGHT = 562
+IMAGE_MAX_DIMENSION = 1000
+
 # Misc
 BUZZER_FREQUENCY = 440 # Hz
-BUTTON_BOUNCE_MS = 500
-IMAGE_MAX_DIMENSION = 1000
+BUTTON_BOUNCE_MS = 750
+DEBUG = False
 
 
 #######################################
@@ -41,7 +49,7 @@ class Mode(Enum):
 
 mode = Mode.TEXT
 camera = PiCamera()
-
+camera.resolution = (IMAGE_CAPTURE_WIDTH, IMAGE_CAPTURE_HEIGHT)
 
 #######################################
 #           Helper functions          #
@@ -222,7 +230,7 @@ def button1(channel):
     """
     # Capture image from picam
     stream = io.BytesIO()
-    camera.capture(stream, format="jpeg")
+    camera.capture(stream, format="jpeg", resize=(IMAGE_RESIZE_WIDTH, IMAGE_RESIZE_HEIGHT))
 
     # Construct a numpy array from the stream
     data = np.frombuffer(stream.getvalue(), dtype=np.uint8)
@@ -230,8 +238,9 @@ def button1(channel):
     # "Decode" the image from the array, preserving colour
     image = cv2.imdecode(data, 1)
 
-    # Resize
-    image = resizeImage(image)
+    if DEBUG:
+        filename = "img/{}.png".format(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
+        cv2.imwrite(filename, image)
 
     # Make API call based on which mode we are in
     if mode == Mode.TEXT:
@@ -281,6 +290,7 @@ if __name__ == "__main__":
     #######################################
     #     Loop to keep program running    #
     #######################################
+    print("Setup done")
     try:
         while True:
             time.sleep(1)
