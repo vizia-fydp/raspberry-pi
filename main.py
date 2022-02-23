@@ -1,5 +1,6 @@
 import base64
 import cv2
+import datetime
 import io
 import json
 import requests
@@ -34,6 +35,7 @@ IMAGE_MAX_DIMENSION = 1000
 # Misc
 BUZZER_FREQUENCY = 440 # Hz
 BUTTON_BOUNCE_MS = 500
+DEBUG = False
 
 
 #######################################
@@ -236,8 +238,9 @@ def button1(channel):
     # "Decode" the image from the array, preserving colour
     image = cv2.imdecode(data, 1)
 
-    filename = "img/{}.png".format(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
-    cv2.imwrite(filename, image)
+    if DEBUG:
+        filename = "img/{}.png".format(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
+        cv2.imwrite(filename, image)
 
     # Make API call based on which mode we are in
     if mode == Mode.TEXT:
