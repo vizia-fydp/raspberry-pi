@@ -13,7 +13,7 @@ from picamera import PiCamera
 ##########################
 #       Constants        #
 ##########################
-SERVER_URL = "https://7852-64-229-183-215.ngrok.io"
+SERVER_URL = "https://ce92-64-229-183-215.ngrok.io"
 
 # Pins
 BUTTON1_PIN = 4
@@ -233,6 +233,9 @@ def button1(channel):
     # Resize
     image = resizeImage(image)
 
+    filename = "img/{}.png".format(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
+    cv2.imwrite(filename, image)
+
     # Make API call based on which mode we are in
     if mode == Mode.TEXT:
         ocr(image, "TEXT_DETECTION")
@@ -281,6 +284,7 @@ if __name__ == "__main__":
     #######################################
     #     Loop to keep program running    #
     #######################################
+    print("Setup done")
     try:
         while True:
             time.sleep(1)
