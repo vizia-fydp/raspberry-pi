@@ -24,10 +24,16 @@ BUZZER_PIN = 5
 IOS_INFO = "iOS_info"
 IOS_RESULTS = "iOS_results"
 
+# Image dimensions
+IMAGE_CAPTURE_WIDTH = 1920
+IMAGE_CAPTURE_HEIGHT = 1080
+IMAGE_RESIZE_WIDTH = 1000
+IMAGE_RESIZE_HEIGHT = 562
+IMAGE_MAX_DIMENSION = 1000
+
 # Misc
 BUZZER_FREQUENCY = 440 # Hz
 BUTTON_BOUNCE_MS = 500
-IMAGE_MAX_DIMENSION = 1000
 
 
 #######################################
@@ -41,7 +47,7 @@ class Mode(Enum):
 
 mode = Mode.TEXT
 camera = PiCamera()
-
+camera.resolution = (IMAGE_CAPTURE_WIDTH, IMAGE_CAPTURE_HEIGHT)
 
 #######################################
 #           Helper functions          #
@@ -222,16 +228,13 @@ def button1(channel):
     """
     # Capture image from picam
     stream = io.BytesIO()
-    camera.capture(stream, format="jpeg")
+    camera.capture(stream, format="jpeg", resize=(IMAGE_RESIZE_WIDTH, IMAGE_RESIZE_HEIGHT))
 
     # Construct a numpy array from the stream
     data = np.frombuffer(stream.getvalue(), dtype=np.uint8)
 
     # "Decode" the image from the array, preserving colour
     image = cv2.imdecode(data, 1)
-
-    # Resize
-    image = resizeImage(image)
 
     filename = "img/{}.png".format(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
     cv2.imwrite(filename, image)
