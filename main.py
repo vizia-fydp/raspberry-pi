@@ -19,7 +19,8 @@ SERVER_URL = "https://ce92-64-229-183-215.ngrok.io"
 # Pins
 BUTTON1_PIN = 4
 BUTTON2_PIN = 27
-BUZZER_PIN = 5
+BUZZER_PIN = 13
+LBO_PIN = 26
 
 # SocketIO paths that iOS app listens on
 IOS_INFO = "iOS_info"
@@ -70,6 +71,14 @@ def errorBeep():
     beep()
     time.sleep(0.1)
     beep()
+
+def lboBeep():
+    """
+    Plays four short beeps to indicate low battery
+    """
+    errorBeep()
+    time.sleep(0.3)
+    errorBeep()
 
 def resizeImage(image):
     """
@@ -263,6 +272,13 @@ def button2(channel):
     socket_emit(IOS_INFO, str(mode.name))
     print("Switched to mode {}".format(mode))
 
+def lowBattery(channel):
+    """
+    Emits low battery beep on the buzzer
+    """
+    lboBeep()
+    print("Battery Low. Connect to MicroUSB Power Source.")
+
 
 if __name__ == "__main__":
     #######################################
@@ -281,11 +297,18 @@ if __name__ == "__main__":
     GPIO.setup(BUZZER_PIN, GPIO.OUT)
     buzzer = GPIO.PWM(BUZZER_PIN, BUZZER_FREQUENCY)
 
+    # Setup PowerBoost LBO
+    GPIO.setup(LBO_PIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+
     # Setup interrupts on falling edge (button released)
     GPIO.add_event_detect(BUTTON1_PIN, GPIO.FALLING, callback = button1,
         bouncetime = BUTTON_BOUNCE_MS)
     GPIO.add_event_detect(BUTTON2_PIN, GPIO.FALLING, callback = button2,
         bouncetime = BUTTON_BOUNCE_MS)
+
+    # Setup interrupts on falling edge (battery voltage < 3.2v)
+    GPIO.add_event_detect(LBO_PIN, GPIO.FALLING, callback = lowBattery,
+        bouncetime = 5000)
 
     #######################################
     #     Loop to keep program running    #
