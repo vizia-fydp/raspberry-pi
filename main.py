@@ -14,11 +14,11 @@ from picamera import PiCamera
 ##########################
 #       Constants        #
 ##########################
-SERVER_URL = "https://ce92-64-229-183-215.ngrok.io"
+SERVER_URL = "https://c529-2607-fea8-1ca4-b000-f925-2fa1-b438-610.ngrok.io/"
 
 # Pins
-BUTTON1_PIN = 4
-BUTTON2_PIN = 27
+BUTTON1_PIN = 27
+BUTTON2_PIN = 4
 BUZZER_PIN = 13
 LBO_PIN = 26
 
@@ -27,10 +27,12 @@ IOS_INFO = "iOS_info"
 IOS_RESULTS = "iOS_results"
 
 # Image dimensions
-IMAGE_CAPTURE_WIDTH = 1920
-IMAGE_CAPTURE_HEIGHT = 1080
-IMAGE_RESIZE_WIDTH = 1000
-IMAGE_RESIZE_HEIGHT = 562
+# Dimensions are flipped here because we have to apply a 90 degree
+# clockwise rotation due to the camera orientation in the casing
+IMAGE_CAPTURE_WIDTH = 1080
+IMAGE_CAPTURE_HEIGHT = 1920
+IMAGE_RESIZE_WIDTH = 562
+IMAGE_RESIZE_HEIGHT = 1000
 IMAGE_MAX_DIMENSION = 1000
 
 # Misc
@@ -247,6 +249,9 @@ def button1(channel):
     # "Decode" the image from the array, preserving colour
     image = cv2.imdecode(data, 1)
 
+    # Rotate image due to casing design
+    image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
+
     if DEBUG:
         filename = "img/{}.png".format(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
         cv2.imwrite(filename, image)
@@ -298,7 +303,7 @@ if __name__ == "__main__":
     buzzer = GPIO.PWM(BUZZER_PIN, BUZZER_FREQUENCY)
 
     # Setup PowerBoost LBO
-    GPIO.setup(LBO_PIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+    #GPIO.setup(LBO_PIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
     # Setup interrupts on falling edge (button released)
     GPIO.add_event_detect(BUTTON1_PIN, GPIO.FALLING, callback = button1,
@@ -307,8 +312,8 @@ if __name__ == "__main__":
         bouncetime = BUTTON_BOUNCE_MS)
 
     # Setup interrupts on falling edge (battery voltage < 3.2v)
-    GPIO.add_event_detect(LBO_PIN, GPIO.FALLING, callback = lowBattery,
-        bouncetime = 5000)
+    #GPIO.add_event_detect(LBO_PIN, GPIO.FALLING, callback = lowBattery,
+    #    bouncetime = 5000)
 
     #######################################
     #     Loop to keep program running    #
@@ -316,6 +321,12 @@ if __name__ == "__main__":
     print("Setup done")
     try:
         while True:
-            time.sleep(1)
+            input()
+            mode = Mode((mode.value + 1) % len(Mode))
+
+            # Emit on IOS_INFO socket so app can announce mode switch
+            socket_emit(IOS_INFO, str(mode.name))
+            print("Switched to mode {}".format(mode))
+            # time.sleep(1)
     except:
         GPIO.cleanup()
